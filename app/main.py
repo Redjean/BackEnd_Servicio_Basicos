@@ -1,8 +1,9 @@
 from fastapi import FastAPI, HTTPException
 from fastapi.responses import JSONResponse
 from fastapi.middleware.cors import CORSMiddleware
-from modelsSB import SearchModel
-
+from fastapi.encoders import jsonable_encoder
+from .modelsSB import SearchModel, BillsModel
+from .search import search_bill, set_bills
 
 app = FastAPI()
 
@@ -14,9 +15,19 @@ app.add_middleware(
     allow_headers=["*"]
 )
 
-@app.get("/serch_bill", response_model=SearchModel)
-async def serchBill(seach:SearchModel):
-    #crear funcion para buscar facturas mediante Ci. carpeta search
-    a=1
+@app.get("/")
+async def message_root ():
+    return {'Mensaje':'Back de servicios básicos'}
 
-#@app.post("/pay_bill")
+@app.post("/search_bill", response_model=SearchModel)
+async def searchBill(search:SearchModel):
+    status, response = await search_bill(search)
+    response = jsonable_encoder(response)
+    return JSONResponse(status_code=status, content=response)
+    
+
+@app.post("/set_bill", response_model=BillsModel)
+async def setBill(bill:BillsModel):
+    status, response = await set_bills(bill)
+    response = jsonable_encoder(response)
+    return JSONResponse(status_code=status, content=response)
