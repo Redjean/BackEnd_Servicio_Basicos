@@ -31,12 +31,13 @@ async def search_bill(search: str):
         if len(splitResult) == 2:
             ci, params = splitResult
         else:
-            formatted_results.append("Formato no válido")
+            formatted_results.append({"code": "formato no válido"})
             return formatted_results
         collection = getCollection(params)            
         cursor = collection.find({'ci': ci})
         results.extend(await cursor.to_list(length=None))
         if not results:
+            formatted_results.append({"code": "No existen facturas pendientes"})
             return formatted_results
         else:
             for bill in results:
@@ -47,7 +48,7 @@ async def search_bill(search: str):
                     formatted_results.append(bill)
             return formatted_results
     else: 
-        formatted_results.append("Formato no válido")
+        formatted_results.append({"code": "formato no válido"})
         return formatted_results
 
 #POST set_bill
