@@ -14,4 +14,8 @@ except ConnectionFailure:
 
 database = client.Servicios_Basicos
 
-bills_collection = database.get_collection("Facturas")
+# Crear colecciones para diferentes tipos de facturas
+facturas_luz = database.get_collection("Facturas_Luz")
+facturas_agua = database.get_collection("Facturas_Agua")
+facturas_internet = database.get_collection("Facturas_Internet")
+facturas_telefono = database.get_collection("Facturas_Telefono")

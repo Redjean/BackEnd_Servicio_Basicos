@@ -8,7 +8,7 @@ class BillsModel(BaseModel):
     name: str
     email: EmailStr
     amount: float
-    description: str
+    type: str
     status: str
     start_date: Optional[datetime]
     expired_date: Optional[datetime]
