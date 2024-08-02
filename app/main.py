@@ -19,11 +19,11 @@ app.add_middleware(
 async def message_root ():
     return {'Mensaje':'Back de servicios básicos'}
 
-@app.post("/search_bill", response_model=SearchModel)
-async def searchBill(search:SearchModel):
-    status, response = await search_bill(search)
+@app.get("/search_bill/{NumCI_Params}")
+async def searchBill(NumCI_Params:str):
+    response = await search_bill(NumCI_Params)
     response = jsonable_encoder(response)
-    return JSONResponse(status_code=status, content=response)
+    return JSONResponse(content=response)
     
 
 @app.post("/set_bill", response_model=BillsModel)
