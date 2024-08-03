@@ -28,8 +28,7 @@ def getCollection(params:str):
         return facturas_telefono_collection
 
 async def generateNumInvoice(collection):
-    #Generar número
-    randomNumber = random.randint(1000000000, 9999999999)
+    randomNumber = random.randint(1000000000, 9999999999)  # 10 dígitos
     #Verificar si el número de contrato existe
     result = await collection.find_one({"contract": randomNumber})
     print(result)
@@ -41,19 +40,19 @@ async def generateNumInvoice(collection):
 
 #Funciones que toman los end-points
 #GET search_bill
-async def search_bill(search: int):
+async def search_bill(search: str):
     key_to_remove = ["_id", "status", "type"]
     if "_" in search:
         splitResult = search.split("_")
         if len(splitResult) == 2:
-            invoice, params = splitResult
-            invoice = int(invoice)
+            contract, params = splitResult
+            contract = int(contract)
         else:
             return ({"code": "formato no válido"})
         collection = getCollection(params)
-        result = await collection.find_one({"invoice": invoice})
+        result = await collection.find_one({"account": contract})
         if not result: 
-            return ({"code": "No existe número de factura"})
+            return ({"code": "No existe cuenta pendiente"})
         else: 
             if result.get("status") == "Pendiente":
                 for key in key_to_remove:
@@ -64,25 +63,26 @@ async def search_bill(search: int):
 
 #POST set_bill
 async def set_bills(bill_data: BillsModel):
+    
     today = datetime.now()
     start_date, end_date = get_first_and_last_day(today)
     bill_data.start_date = start_date
     bill_data.expired_date = end_date
 
     if bill_data.type == "luz":
-        bill_data.invoice = await generateNumInvoice(facturas_luz_collection)
+        bill_data.account = await generateNumInvoice(facturas_luz_collection)
         bill_dict = bill_data.dict(by_alias=True)
         result = await facturas_luz_collection.insert_one(bill_dict)
     elif bill_data.type == "agua":
-        bill_data.invoice = await generateNumInvoice(facturas_agua_collection)
+        bill_data.account = await generateNumInvoice(facturas_agua_collection)
         bill_dict = bill_data.dict(by_alias=True)    
         result = await facturas_agua_collection.insert_one(bill_dict)
     elif bill_data.type == "internet":
-        bill_data.invoice = await generateNumInvoice(facturas_internet_collection) 
+        bill_data.account = await generateNumInvoice(facturas_internet_collection) 
         bill_dict = bill_data.dict(by_alias=True)    
         result = await facturas_internet_collection.insert_one(bill_dict)
     elif bill_data.type == "telefono":
-        bill_data.invoice = await generateNumInvoice(facturas_telefono_collection)    
+        bill_data.account = await generateNumInvoice(facturas_telefono_collection)    
         bill_dict = bill_data.dict(by_alias=True)
         result = await facturas_telefono_collection.insert_one(bill_dict)
     else:

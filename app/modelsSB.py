@@ -4,7 +4,7 @@ from typing import Union
 from datetime import datetime
 
 class BillsModel(BaseModel):
-    invoice: int
+    account: int
     ci:str
     name: str
     email: EmailStr
