@@ -17,3 +17,6 @@ class BillsModel(BaseModel):
 
 class SearchModel(BaseModel):
     ci: str
+
+class CancelledBillModel(BillsModel):
+    fecha_de_cancelacion: str

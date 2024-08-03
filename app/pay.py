@@ -1,0 +1,12 @@
+from .search import getCollection
+
+
+async def get_bill_amount(account_number: str, service_type: str):
+    collection = getCollection(service_type)
+    result = await collection.find_one({"account": account_number})
+    if not result:
+        return 200, {"code": "No existe cuenta pendiente"}
+    elif result.get("status") == "Pendiente":
+        return 200, {"monto": result["amount"]}
+    else:
+        return 200, {"code": "No hay monto pendiente"}

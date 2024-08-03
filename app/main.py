@@ -4,6 +4,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.encoders import jsonable_encoder
 from .modelsSB import SearchModel, BillsModel
 from .search import search_bill, set_bills
+from .pay import get_bill_amount
 
 app = FastAPI()
 
@@ -31,3 +32,11 @@ async def setBill(bill:BillsModel):
     status, response = await set_bills(bill)
     response = jsonable_encoder(response)
     return JSONResponse(status_code=status, content=response)
+
+
+@app.get("/get_bill_amount/{account_number}/{service_type}")
+async def getBillAmount(account_number: int, service_type: str):
+    status, response = await get_bill_amount(account_number, service_type)
+    response = jsonable_encoder(response)
+    return JSONResponse(status_code=status, content=response)
+

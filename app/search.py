@@ -56,8 +56,11 @@ async def search_bill(search: str):
         else: 
             if result.get("status") == "Pendiente":
                 for key in key_to_remove:
-                    del result[key]
-            return result
+                    if key in result:
+                        del result[key]
+                return result
+            else:
+                return ({"code": "Cuenta no está pendiente"})
     else:
         return({"code": "formato no válido"})
 
@@ -92,3 +95,5 @@ async def set_bills(bill_data: BillsModel):
         return 200, {"code": "Éxito", "id": str(result.inserted_id)}
     else:
         return 500, {"code": "ERROR_INSERTING"}
+
+
