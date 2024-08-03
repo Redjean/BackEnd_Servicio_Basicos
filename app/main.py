@@ -19,9 +19,9 @@ app.add_middleware(
 async def message_root ():
     return {'Mensaje':'Back de servicios básicos'}
 
-@app.get("/search_bill/{NumCI_Params}")
-async def searchBill(NumCI_Params:str):
-    response = await search_bill(NumCI_Params)
+@app.get("/search_bill/{NumContract_Params}")
+async def searchBill(NumContract_Params:str):
+    response = await search_bill(NumContract_Params)
     response = jsonable_encoder(response)
     return JSONResponse(content=response)
     

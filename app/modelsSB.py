@@ -4,6 +4,7 @@ from typing import Union
 from datetime import datetime
 
 class BillsModel(BaseModel):
+    invoice: int
     ci:str
     name: str
     email: EmailStr
@@ -11,8 +12,8 @@ class BillsModel(BaseModel):
     type: str
     status: str
     Address: str
-    start_date: Optional[datetime]
-    expired_date: Optional[datetime]
+    start_date: str
+    expired_date: str
 
 class SearchModel(BaseModel):
     ci: str
