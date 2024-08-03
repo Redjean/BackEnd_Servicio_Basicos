@@ -10,6 +10,7 @@ class BillsModel(BaseModel):
     amount: float
     type: str
     status: str
+    Address: str
     start_date: Optional[datetime]
     expired_date: Optional[datetime]
 

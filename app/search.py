@@ -46,6 +46,8 @@ async def search_bill(search: str):
                         if key in bill:
                             del bill[key]
                     formatted_results.append(bill)
+            if len(formatted_results) == 0:
+                formatted_results.append({"code": "No existen facturas pendientes"})
             return formatted_results
     else: 
         formatted_results.append({"code": "formato no válido"})
