@@ -1,5 +1,10 @@
 from .search import getCollection
+from datetime import datetime
 
+def FormatIso(date: datetime): #Entrada: datetime  Salida: str
+    date = date.date()
+    date = date.isoformat()
+    return date
 
 async def get_bill_amount(account_number: str, service_type: str):
     collection = getCollection(service_type)
