@@ -4,8 +4,8 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.encoders import jsonable_encoder
 from .modelsSB import SearchModel, BillsModel
 from .search import search_bill, set_bills
-from .pay import get_bill_amount
-
+from .pay import get_bill_amount, check_Paid
+from bson import ObjectId
 app = FastAPI()
 
 app.add_middleware(
@@ -40,3 +40,10 @@ async def getBillAmount(account_number: int, service_type: str):
     response = jsonable_encoder(response)
     return JSONResponse(status_code=status, content=response)
 
+@app.delete("/checkPaid/{account_number}/{service_type}")
+async def cancelBill(account_number: int, service_type: str):
+    status, response = await check_Paid(account_number, service_type)
+    if "_id" in response and isinstance(response["_id"], ObjectId):
+        response["_id"] = str(response["_id"])
+    response = jsonable_encoder(response)
+    return JSONResponse(status_code=status, content=response)

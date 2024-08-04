@@ -97,3 +97,4 @@ async def set_bills(bill_data: BillsModel):
         return 500, {"code": "ERROR_INSERTING"}
 
 
+

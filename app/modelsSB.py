@@ -19,4 +19,13 @@ class SearchModel(BaseModel):
     ci: str
 
 class CancelledBillModel(BillsModel):
-    fecha_de_cancelacion: str
+    account: int
+    ci: str
+    name: str
+    email: EmailStr
+    amount: float
+    type: str
+    Address: str
+    start_date: str
+    expired_date: str
+    cancellation_date: Optional[str] = None
