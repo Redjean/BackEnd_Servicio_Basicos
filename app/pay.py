@@ -29,7 +29,8 @@ async def check_Paid(account_number: int, service_type: str):
         return 200, {"code": "La factura no está pendiente"}
 
     
-    result["cancellation_date"] = datetime.now().isoformat()
+    result["cancellation_date"] = datetime.now()
+    result["cancellation_date"] = result["cancellation_date"].date().isoformat()
 
 
     result["_id"] = str(result["_id"])
