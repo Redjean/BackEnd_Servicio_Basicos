@@ -1,25 +1,33 @@
-from .search import getCollection
+from .search import getCollection 
 from datetime import datetime
 from bson import ObjectId
 from .databaseSB import facturas_canceladas_collection
-def FormatIso(date: datetime): #Entrada: datetime  Salida: str
-    date = date.date()
-    date = date.isoformat()
-    return date
+import random
+
+async def generateNum():
+    randomNumber = random.randint(1000000000, 9999999999)  # 10 dígitos
+    #Verificar si el número de contrato existe
+    result = await facturas_canceladas_collection.find_one({"Número de factura": randomNumber})
+    print(result)
+    if result is None:
+        print(randomNumber)
+        return randomNumber
+    else:
+        generateNum()
 
 async def get_bill_amount(account_number: int, service_type: str):
     collection = getCollection(service_type)
+    print(collection)
     result = await collection.find_one({"account": account_number})
     if not result:
-        return 200, {"code": "No existe cuenta pendiente"}
+        return {"code": "No existe cuenta pendiente"}
     elif result.get("status") == "Pendiente":
-        return 200, {"monto": result["amount"]}
+        return {"monto": result["amount"]}
     else:
-        return 200, {"code": "No hay monto pendiente"}
+        return {"code": "No hay monto pendiente"}
 
 async def check_Paid(account_number: int, service_type: str):
     collection = getCollection(service_type)
-
     # Buscar la factura pendiente
     result = await collection.find_one({"account": account_number})
     if not result:
@@ -30,19 +38,27 @@ async def check_Paid(account_number: int, service_type: str):
 
     
     result["cancellation_date"] = datetime.now()
-    result["cancellation_date"] = result["cancellation_date"].date().isoformat()
+    cancellation_date= result["cancellation_date"].date().isoformat()
+    num_invoice = await generateNum()
 
-
-    result["_id"] = str(result["_id"])
+    nueva_factura ={
+        "Número de factura": num_invoice,
+        "Contrato": result["account"],
+        "CI": result["ci"],
+        "Tipo de servicio cancelado": result["type"],
+        "Fecha de inicio de la planilla": result["start_date"],
+        "Fecha de expiración": result["expired_date"],
+        "Fecha que se realizó la cancelación": cancellation_date
+    }
 
     # Insertar la factura en la colección de facturas canceladas
-    insert_result = await facturas_canceladas_collection.insert_one(result)
+    insert_result = await facturas_canceladas_collection.insert_one(nueva_factura)
     if not insert_result.inserted_id:
-        return 200, {"code": "Error al mover"}
+        return 200, {"code": "Error al registrar nueva factura"}
 
     # Eliminar la factura original
     delete_result = await collection.delete_one({"account": account_number})
     if delete_result.deleted_count == 0:
         return 200, {"code": "Error al eliminar la factura original"}
 
-    return 200, result
+    return 200, {"Code": "Pago exitoso y factura registrada"}
